@@ -17,21 +17,24 @@ class Image
     ones = ones
   end
 
-  def blur!
+  def blur!(blur_distance)
     ones = get_ones
     @image.each_with_index do |x, row_id|
       x.each_with_index do |y, col_id|
         ones.each do |ones_row_id, ones_col_id|
-
-          if row_id == ones_row_id && col_id == ones_col_id
-            @image[row_id -1][col_id] = 1 unless row_id == 0 
-            @image[row_id +1][col_id] = 1 unless row_id >= 3 
-            @image[row_id][col_id -1] = 1 unless col_id == 0 
-            @image[row_id][col_id +1] = 1 unless col_id >= 3 
+          man_distance = manhattan_distance(row_id, ones_row_id, col_id, ones_col_id)
+          if man_distance <= blur_distance
+            @image[row_id][col_id] = 1
           end
         end
       end
     end
+  end
+
+  def manhattan_distance(row1, row2, col1, col2)
+    delta_row = (row1 - row2).abs
+    delta_col = (col1 - col2).abs
+    delta_row + delta_col
   end
 
   def output_image
@@ -48,6 +51,6 @@ image = Image.new([
 [0, 0, 0, 0]
 ])
 
-image.blur!
+image.blur!(1)
 puts
 image.output_image
